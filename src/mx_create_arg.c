@@ -59,6 +59,14 @@ t_arg *create_enotdir_arg(int size, char **argv, int files)
     return enotd;
 }
 
+char **mx_filearr(char *str)
+{
+    char **arr = (char **)malloc(sizeof(char *));
+
+    arr[0] = mx_strdup(str);
+    return arr;
+}
+
 t_arg **create_arg(int *size, char **argv, t_flags *flags)
 {
     int files = count_files(*size, argv);
@@ -90,7 +98,7 @@ t_arg **create_arg(int *size, char **argv, t_flags *flags)
                 arg[count]->path = mx_strdup(argv[i]);
                 arg[count]->size = 1;
                 arg[count]->files = (char **)malloc(sizeof(char *));
-                *(arg[count]->files) = mx_strdup(argv[i]);
+                arg[count]->files = mx_filearr(argv[i]);
             }
         }
     }

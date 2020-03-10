@@ -194,7 +194,9 @@ void mx_long_format(t_arg *arg, t_flags *flags)
             if (j == 6 && *long_form[0][i] == 'l')
             {
                 mx_printstr(" -> ");
-                mx_printstr(mx_get_link(long_form[6][i]));
+                char *link = mx_get_link(long_form[6][i]);
+                mx_printstr(link);
+                free(link);
             }
             if (j == 2 || j == 3)
                 mx_printspaces(maxlens[j] - mx_strlen(long_form[j][i]) + 1);

@@ -29,6 +29,8 @@ typedef struct s_flags {
     void (*print_ls)(t_arg *arg, struct s_flags *flags);
 }t_flags;
 
+void mx_delstrarr(char ***arr, int size);
+void mx_del_arg(t_arg **arg, int size);
 void mx_uls(int argc, char **argv, t_flags *flags);
 bool mx_standart_order(int cmp);
 bool mx_reverse_order(int cmp);
