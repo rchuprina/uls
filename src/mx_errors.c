@@ -20,7 +20,7 @@ void mx_print_error(int error, char *str)
     char *buf = NULL;
 
     if (!error)
-        err = mx_replace_substr("uls: illegal option -- zzz\nusage: uls [-l] [file ...]\n", "zzz", str);
+        err = mx_replace_substr("uls: illegal option -- zzz\nusage: uls [-Rlr] [file ...]\n", "zzz", str);
     if (error == ENOENT)
         err = mx_replace_substr("uls: xxx: No such file or directory\n", "xxx", str);
     if (error == 26)

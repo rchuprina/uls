@@ -2,6 +2,8 @@
 
 void mx_set_flags(t_flags *flags, char *arg)
 {
+    char *err = NULL;
+
     for (int i = 1; arg[i]; i++)
     {
         switch (arg[i])
@@ -16,7 +18,10 @@ void mx_set_flags(t_flags *flags, char *arg)
             flags->recursion = true;
             break;
         default:
-            mx_print_error(0, &arg[i]);
+            err = mx_strndup(&arg[i], 1);
+            mx_print_error(0, err);
+            free(err);
+            free(flags);
             exit(0);
             break;
         }
