@@ -28,6 +28,7 @@ typedef struct s_flags {
     bool (*order)(int cmp);
     void (*print_ls)(t_arg *arg, struct s_flags *flags);
 }t_flags;
+
 char **mx_filearr(char *str);
 void mx_delstrarr(char **arr, int size);
 void mx_del_arg(t_arg **arg, int size);
@@ -45,7 +46,7 @@ int mx_get_size(char *str);
 int mx_get_maxlen(char **names, int size);
 char *mx_get_fullname(char *name, char *dir);
 char **mx_get_names(char *str, int size);
-char *mx_get_link(char *path);
+char *mx_get_link(char *path, char *file);
 
 //errors
 int mx_get_type(char *name);

@@ -1,27 +1,38 @@
 #include "uls.h"
 
-static int count_dir(int count, char **files)
+static int count_dir(t_arg *arg)
 {
     int dirs = 0;
+    struct stat buf;
+    char *fullname = NULL;
 
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < arg->size; i++)
     {
-        if (mx_get_type(files[i]) == 100)
+        fullname = mx_get_fullname(arg->path, arg->files[i]);
+        lstat(fullname, &buf);
+        free(fullname);
+        if (S_ISDIR(buf.st_mode))
             dirs++;
     }
     return dirs;
 }
 
-static char **dnames(int count, char **files, int dirs, char *root)
+static char **dnames(t_arg *arg, int dirs)
 {
     char **names = (char **)malloc((dirs) * sizeof(char *));
+    char *root = mx_strjoin(arg->path, "/");
+    struct stat buf;
+    char *fullname = NULL;
 
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < arg->size; i++)
     {
-        if (mx_get_type(files[i]) == 100)
+        fullname = mx_get_fullname(arg->path, arg->files[i]);
+        lstat(fullname, &buf);
+        free(fullname);
+        if (S_ISDIR(buf.st_mode))
         {
             dirs--;
-            names[dirs] = mx_strjoin(root, files[i]);
+            names[dirs] = mx_strjoin(root, arg->files[i]);
         }
     }
     free(root);
@@ -30,6 +41,9 @@ static char **dnames(int count, char **files, int dirs, char *root)
 
 void mx_list_dir(int count, t_arg **arg, t_flags *flags)
 {
+    char **names = NULL;
+    int dirs = 0;
+
     for (int i = 0; i < count; i++)
     {
         if (arg[i]->type == ENOENT)
@@ -52,13 +66,13 @@ void mx_list_dir(int count, t_arg **arg, t_flags *flags)
                 flags->print_ls(arg[i], flags);
                 if (flags->recursion)
                 {
-                    int dirs = count_dir(arg[i]->size, arg[i]->files);
+                    dirs = count_dir(arg[i]);
                     if (dirs > 0)
                     {
                         mx_printchar('\n');
-                        char **na = dnames(arg[i]->size, arg[i]->files, dirs, mx_strjoin(arg[i]->path, "/"));
-                        mx_uls(dirs, na, flags);
-                        mx_delstrarr(na, dirs);
+                        names = dnames(arg[i], dirs);
+                        mx_uls(dirs, names, flags);
+                        mx_delstrarr(names, dirs);
                     }
                 }
             }

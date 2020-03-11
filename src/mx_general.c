@@ -29,13 +29,15 @@ char *mx_get_fullname(char *dir, char *file)
     }
 }
 
-char *mx_get_link(char *path)
+char *mx_get_link(char *path, char *file)
 {
     char link[255];
     int size = 0;
+    char *buf = mx_get_fullname(path, file);
 
-    size = readlink(path, link, sizeof(link) - 1);
+    size = readlink(buf, link, sizeof(link) - 1);
     link[size] = '\0';
+    free(buf);
     return mx_strdup(link);
 }
 
