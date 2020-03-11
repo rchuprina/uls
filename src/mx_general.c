@@ -2,15 +2,31 @@
 
 char *mx_get_fullname(char *dir, char *file)
 {
-    if (dir[0] != '.')
+    char *buf = NULL;
+    char *buf2 = NULL;
+
+    if (!mx_memcmp(dir, ".\0", 2))
+        return mx_strdup(file);
+    else
     {
         if (dir[mx_strlen(dir) - 1] != '/')
-            return mx_strjoin(mx_strjoin(dir, "/"), file);
+        {
+            if (dir[1] == '/')
+                buf = mx_strjoin(&dir[2], "/");
+            else
+                buf = mx_strjoin(dir, "/");
+            buf2 = mx_strjoin(buf, file);
+            free(buf);
+            return buf2;
+        }
         else
-            return mx_strjoin(dir, file);
+        {
+            if (dir[1] == '/')
+                return mx_strjoin(&dir[2], file);
+            else
+                return mx_strjoin(dir, file);
+        }
     }
-    else
-        return file;
 }
 
 char *mx_get_link(char *path)
@@ -18,8 +34,7 @@ char *mx_get_link(char *path)
     char link[255];
     int size = 0;
 
-    path++;
-    //size = readlink(path, link, sizeof(link) - 1);
+    size = readlink(path, link, sizeof(link) - 1);
     link[size] = '\0';
     return mx_strdup(link);
 }

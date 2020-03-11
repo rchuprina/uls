@@ -28,8 +28,8 @@ typedef struct s_flags {
     bool (*order)(int cmp);
     void (*print_ls)(t_arg *arg, struct s_flags *flags);
 }t_flags;
-
-void mx_delstrarr(char ***arr, int size);
+char **mx_filearr(char *str);
+void mx_delstrarr(char **arr, int size);
 void mx_del_arg(t_arg **arg, int size);
 void mx_uls(int argc, char **argv, t_flags *flags);
 bool mx_standart_order(int cmp);

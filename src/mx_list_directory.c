@@ -55,9 +55,10 @@ void mx_list_dir(int count, t_arg **arg, t_flags *flags)
                     int dirs = count_dir(arg[i]->size, arg[i]->files);
                     if (dirs > 0)
                     {
+                        mx_printchar('\n');
                         char **na = dnames(arg[i]->size, arg[i]->files, dirs, mx_strjoin(arg[i]->path, "/"));
                         mx_uls(dirs, na, flags);
-                        mx_delstrarr(&na, dirs);
+                        mx_delstrarr(na, dirs);
                     }
                 }
             }

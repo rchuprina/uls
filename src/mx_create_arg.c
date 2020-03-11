@@ -97,7 +97,6 @@ t_arg **create_arg(int *size, char **argv, t_flags *flags)
                     flags->ex = true;
                 arg[count]->path = mx_strdup(argv[i]);
                 arg[count]->size = 1;
-                arg[count]->files = (char **)malloc(sizeof(char *));
                 arg[count]->files = mx_filearr(argv[i]);
             }
         }

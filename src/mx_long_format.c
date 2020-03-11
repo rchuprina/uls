@@ -19,7 +19,7 @@ static char *getGroupname(gid_t st_gid)
         return mx_strdup(grp->gr_name);
     return mx_itoa(st_gid);  
 }
-/*
+
 static char get_acl(char *file) {
 	char character;
 	ssize_t xattr = listxattr(file, NULL, 0, XATTR_NOFOLLOW);
@@ -33,7 +33,7 @@ static char get_acl(char *file) {
         character = '+';
 	acl_free(acl);
     return character;
-}*/
+}
 
 static char *get_mode(mode_t st_mode, char *file)
 {
@@ -43,7 +43,7 @@ static char *get_mode(mode_t st_mode, char *file)
                 S_ISCHR(st_mode)   ? 'c' : \
                 S_ISDIR(st_mode)   ? 'd' : \
                 S_ISLNK(st_mode)   ? 'l' : \
-                //S_ISSOCK(st_mode)  ? 's' :
+                S_ISSOCK(st_mode)  ? 's' :
                 S_ISFIFO(st_mode)  ? 'p' : '-';
     mode[1] = st_mode & S_IRUSR ? 'r' : '-';
     mode[2] = st_mode & S_IWUSR ? 'w' : '-';
@@ -54,8 +54,7 @@ static char *get_mode(mode_t st_mode, char *file)
     mode[7] = st_mode & S_IROTH ? 'r' : '-';
     mode[8] = st_mode & S_IWOTH ? 'w' : '-';
     mode[9] = st_mode & S_IXOTH ? 'x' : '-';
-    file++;
-    //mode[10] = get_acl(file);
+    mode[10] = get_acl(file);
     return mode;
 }
 
@@ -69,7 +68,7 @@ static char *get_spaces(int len)
 }
 
 static char *get_minor(int minornum) {
-    char *minor;
+    char *minor =NULL;
     char *tmp = NULL;
 
     if (minornum > 127) {
@@ -109,9 +108,19 @@ static char *major_minor(dev_t st_rdev) {
 static char* get_date(struct stat buf)
 {
     time_t t = time(NULL);
+    char *buf1 = NULL;
+    char *buf2 = NULL;
+    char *buf3 = NULL;
 
     if (t - buf.st_ctime >= 15768000)
-        return mx_strjoin(mx_strndup(&(ctime(&buf.st_ctime)[4]), 7), mx_strndup(&(ctime(&buf.st_ctime)[19]), 5));
+    {
+        buf1 = mx_strndup(&(ctime(&buf.st_ctime)[4]), 7);
+        buf2 = mx_strndup(&(ctime(&buf.st_ctime)[19]), 5);
+        buf3 = mx_strjoin(buf1, buf2);
+        free(buf1);
+        free(buf2);
+        return buf3;
+    }
     return mx_strndup(&(ctime(&buf.st_ctime)[4]), 12);
     //return mx_strndup(ctime(&buf.st_ctime), 24);
 }
@@ -127,7 +136,7 @@ static char ***get_long_format(t_arg *arg, int *total, bool *special)
     for (int i = 0; i < arg->size; i++)
     {
         fullname = mx_get_fullname(arg->path, arg->files[i]);
-        stat(fullname, &buf); //lstat
+        lstat(fullname, &buf); //lstat
         l[0][i] = get_mode(buf.st_mode, fullname);
         l[1][i] = mx_itoa(buf.st_nlink);
         l[2][i] = getUsername(buf.st_uid);
@@ -165,6 +174,17 @@ void mx_printspaces(int count)
 {
     for (int i = 0; i < count; i++)
         mx_printchar(' ');
+}
+
+void mx_del_long_format(char ***long_form, int size)
+{
+    for (int i = 0; i < 7; i++)
+    {
+        for (int j = 0; j < size; j++)
+            free(long_form[i][j]);
+        free(long_form[i]);
+    }
+    free(long_form);
 }
 
 void mx_long_format(t_arg *arg, t_flags *flags)
@@ -205,4 +225,6 @@ void mx_long_format(t_arg *arg, t_flags *flags)
         }
         mx_printstr("\n");
     }
+    free(maxlens);
+    mx_del_long_format(long_form, arg->size);
 }
