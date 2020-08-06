@@ -3,7 +3,7 @@
 void mx_set_flags(t_flags *flags, char *arg)
 {
     char *err = NULL;
-
+    
     for (int i = 1; arg[i]; i++)
     {
         switch (arg[i])

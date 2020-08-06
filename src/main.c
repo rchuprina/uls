@@ -31,11 +31,11 @@ void quit(char *root, t_flags *flags)
     if (flags->ex)
     {
         free(flags);
-        system("leaks -q uls");
+        //system("leaks -q uls");
         exit(1);
     }
     free(flags);
-        system("leaks -q uls");
+    //system("leaks -q uls");
 }
 
 int main(int argc, char **argv)

@@ -34,5 +34,6 @@ void mx_print_error(int error, char *str)
     }
     write(2, err, mx_strlen(err));
     free(err);
+    
     //system("leaks -q uls");
 }

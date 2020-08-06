@@ -84,7 +84,7 @@ install:
 	@mv $(RSOBJ) $(RLOBJ) ./obj
 
 uninstall: 
-	@rm -rf $(NAME)
+	@rm -f $(NAME)
 
 clean: 
 	@rm -rf $(RSRCS) $(RINC) $(RLIB)
